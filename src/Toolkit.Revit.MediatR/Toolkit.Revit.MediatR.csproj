@@ -162,13 +162,11 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Revit_All_Main_Versions_API_x64" Version="$(RevitVersion)" />
+		<PackageReference Include="VolocyNazad.Revit.Context" Version="$(RevitVersion).4" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Abstractions\Models\" />
 	  <Folder Include="Abstractions\Services\" />
-	  <Folder Include="Models\" />
-	  <Folder Include="Services\" />
 	</ItemGroup>
 
 </Project>
