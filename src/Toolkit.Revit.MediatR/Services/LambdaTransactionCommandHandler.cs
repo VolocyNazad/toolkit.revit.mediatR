@@ -9,11 +9,10 @@ namespace Toolkit.Revit.MediatR.Services;
 public class LambdaTransactionCommandHandler(IRevitContext revitContext)
     : IRequestHandler<LambdaTransactionCommand, Response<bool>>
 {
-    private readonly IRevitContext _revitContext = revitContext;
-
     public async Task<Response<bool>> Handle(LambdaTransactionCommand request, CancellationToken cancellation)
     {
-        Document targetDocument = request.Document ?? _revitContext.ActiveDocument ?? throw new InvalidOperationException($"Document is null");
+        Document targetDocument = request.Document ?? revitContext.ActiveDocument 
+            ?? throw new InvalidOperationException($"Document is null");
         return new Response<bool> { Result = await request.Delegate.Invoke(targetDocument, cancellation) };
     }
 }

@@ -7,28 +7,29 @@ using Toolkit.Revit.MediatR.Abstractions.Models;
 
 namespace Toolkit.Revit.MediatR.Services;
 
-public class RevitTransactionBehaviour<TRequest, TResponse>(IRevitContext revitContext, ILogger<RevitTransactionBehaviour<TRequest, TResponse>> logger)
-    : IPipelineBehavior<TRequest, TResponse>
-    where TRequest : ITransactionCommand
+public class RevitTransactionBehaviour<TRequest, TResponse>(
+        IRevitContext revitContext, ILogger<RevitTransactionBehaviour<TRequest, TResponse>> logger)
+    : IPipelineBehavior<TRequest, TResponse> where TRequest : ITransactionCommand
 {
-    private readonly IRevitContext _revitContext = revitContext;
-    private readonly ILogger<RevitTransactionBehaviour<TRequest, TResponse>> _logger = logger;
-
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellation)
     {
-        Document? targetDocument = request.Document ?? _revitContext.ActiveDocument
+        Document? targetDocument = request.Document ?? revitContext.ActiveDocument
             ?? throw new InvalidOperationException($"Document is null");
-        TResponse? response = default;
-
         using Transaction transaction = new(targetDocument, request.TransactionName);
 
-        _logger.LogTrace("Transaction for document '{revit.document.title}' with name '{revit.transaction.name}'. Starting...", request.Document?.Title, request.TransactionName);
+        logger.LogTrace(
+            "Transaction for document '{revit.document.title}' with name '{revit.transaction.name}'. Starting...", 
+            request.Document?.Title, request.TransactionName);
+
         transaction.Start();
 
-        response = await next(cancellation).ConfigureAwait(false);
+        TResponse? response = await next(cancellation).ConfigureAwait(false);
 
         transaction.Commit();
-        _logger.LogTrace("Transaction for document '{revit.document.title}' with name '{revit.transaction.name}'. Commited.", request.Document?.Title, request.TransactionName);
+
+        logger.LogTrace(
+            "Transaction for document '{revit.document.title}' with name '{revit.transaction.name}'. Commited.", 
+            request.Document?.Title, request.TransactionName);
 
         return response;
     }
