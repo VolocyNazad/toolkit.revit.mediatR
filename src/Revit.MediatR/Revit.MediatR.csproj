@@ -20,6 +20,8 @@
 		<RepositoryUrl>https://github.com/VolocyNazad/toolkit.revit.mediatR</RepositoryUrl>
 		<PackageReleaseNotes>https://github.com/VolocyNazad/toolkit.revit.mediatR/blob/main/CHANGELOG.md</PackageReleaseNotes>
 		<PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+		<!--<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>-->
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -47,9 +49,9 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<AssemblyVersion>$(MajorRevitVersion).0.5</AssemblyVersion>
-		<FileVersion>$(MajorRevitVersion).0.5</FileVersion>
-		<Version>$(MajorRevitVersion).0.5</Version>
+		<AssemblyVersion>$(MajorRevitVersion).0.6</AssemblyVersion>
+		<FileVersion>$(MajorRevitVersion).0.6</FileVersion>
+		<Version>$(MajorRevitVersion).0.6</Version>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -77,22 +79,7 @@
 		<DefineConstants Condition="'$(MajorRevitVersion)' != ''">VERSION_$(MajorRevitVersion)</DefineConstants>
 
 		<!-- IS константы для конкретных годов -->
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2011'">$(DefineConstants);IS2011</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2012'">$(DefineConstants);IS2012</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2013'">$(DefineConstants);IS2013</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2014'">$(DefineConstants);IS2014</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2015'">$(DefineConstants);IS2015</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2016'">$(DefineConstants);IS2016</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2017'">$(DefineConstants);IS2017</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2018'">$(DefineConstants);IS2018</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2019'">$(DefineConstants);IS2019</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2020'">$(DefineConstants);IS2020</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2021'">$(DefineConstants);IS2021</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2022'">$(DefineConstants);IS2022</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2023'">$(DefineConstants);IS2023</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2024'">$(DefineConstants);IS2024</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2025'">$(DefineConstants);IS2025</DefineConstants>
-		<DefineConstants Condition="'$(MajorRevitVersion)' == '2026'">$(DefineConstants);IS2026</DefineConstants>
+		<DefineConstants Condition="'$(MajorRevitVersion)' != ''">$(DefineConstants);IS$(MajorRevitVersion)</DefineConstants>
 
 		<!-- BEFORE константы для всех годов -->
 		<DefineConstants Condition="'$(MajorRevitVersion)' != '' and $(MajorRevitVersion) &lt;= 2012">$(DefineConstants);BEFORE2012</DefineConstants>
@@ -161,8 +148,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="MediatR" Version="14.1.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.8" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.9" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.9" />
 		<PackageReference Include="PolySharp" Version="1.16.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -172,11 +159,8 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Revit_All_Main_Versions_API_x64" Version="$(RevitVersion)" />
-		<PackageReference Include="VolocyNazad.Revit.Context" Version="$(MajorRevitVersion).0.5" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Abstractions\Services\" />
+		<PackageReference Include="VolocyNazad.Revit.Context" Version="$(MajorRevitVersion).0.6" />
+		<PackageReference Include="VolocyNazad.Revit.Events" Version="$(MajorRevitVersion).0.6" />
 	</ItemGroup>
 
 </Project>

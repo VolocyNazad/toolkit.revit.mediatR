@@ -1,10 +1,10 @@
 ﻿
 using Autodesk.Revit.DB;
 
-namespace Toolkit.Revit.MediatR.Abstractions.Models;
+namespace Revit.MediatR.Base;
 
 public abstract class LambdaDocumentCommand(Document document, Func<Document, CancellationToken, Task<bool>> @delegate)
-    : DocumentCommand(document), ILambdaDocumentAsyncCommand
+    : DocumentCommand(document)
 {
     public Func<Document, CancellationToken, Task<bool>> Delegate { get; } = @delegate;
 }

@@ -2,9 +2,9 @@
 using Autodesk.Revit.DB;
 using MediatR;
 using Revit.Context.Abstractions.Services;
-using Toolkit.Revit.MediatR.Models;
+using Revit.MediatR.Models;
 
-namespace Toolkit.Revit.MediatR.Services;
+namespace Revit.MediatR.Services;
 
 public class LambdaExternalEventCommandHandler(IRevitContext revitContext)
     : IRequestHandler<LambdaExternalEventCommand, Response<bool>>

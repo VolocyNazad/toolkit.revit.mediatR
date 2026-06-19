@@ -1,4 +1,4 @@
-﻿namespace Toolkit.Revit.MediatR.Abstractions.Models;
+﻿namespace Revit.MediatR.Abstractions.Models;
 
 public interface IExternalEventCommand : IDocumentCommand
 {

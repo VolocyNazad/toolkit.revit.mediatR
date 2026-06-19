@@ -1,4 +1,4 @@
-﻿namespace Toolkit.Revit.MediatR.Models;
+﻿namespace Revit.MediatR.Models;
 
 public sealed class Response<TResult>
 {

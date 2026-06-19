@@ -3,9 +3,9 @@ using Autodesk.Revit.DB;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Revit.Context.Abstractions.Services;
-using Toolkit.Revit.MediatR.Abstractions.Models;
+using Revit.MediatR.Abstractions.Models;
 
-namespace Toolkit.Revit.MediatR.Services;
+namespace Revit.MediatR.Services;
 
 public class RevitTransactionBehaviour<TRequest, TResponse>(
         IRevitContext revitContext, ILogger<RevitTransactionBehaviour<TRequest, TResponse>> logger)
