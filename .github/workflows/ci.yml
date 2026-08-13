@@ -30,8 +30,17 @@ jobs:
       with:
         name: VolocyNazad.Revit.MediatR
         path: artifacts/*
+    - name: Check if commit is tagged
+      id: tag_check
+      run: |
+        git describe --tags --exact-match HEAD
+        if ($LASTEXITCODE -eq 0) {
+            echo "is_tagged=true" >> $env:GITHUB_OUTPUT
+        } else {
+            echo "is_tagged=false" >> $env:GITHUB_OUTPUT
+        }
     - name: Publish NuGet package
-      if: github.event_name == 'push'
+      if: github.event_name == 'push' && steps.tag_check.outputs.is_tagged == 'true'
       run: |
         foreach($file in (Get-ChildItem "artifacts/" -Recurse -Include *.nupkg)) {
             dotnet nuget push $file --api-key "${{ secrets.NUGET_API_KEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
