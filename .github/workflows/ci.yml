@@ -33,7 +33,13 @@ jobs:
     - name: Check if commit is tagged
       id: tag_check
       run: |
-        git describe --tags --exact-match HEAD
+        # pwsh на GH Actions по умолчанию завершает шаг ошибкой на любой stderr/non-zero exit
+        # от нативной команды ($PSNativeCommandUseErrorActionPreference) — git describe пишет
+        # "fatal: no tag..." в stderr, когда тега нет. Отключаем это поведение локально для шага.
+        $ErrorActionPreference = "Continue"
+        $PSNativeCommandUseErrorActionPreference = $false
+
+        git describe --tags --exact-match HEAD 2>$null
         if ($LASTEXITCODE -eq 0) {
             echo "is_tagged=true" >> $env:GITHUB_OUTPUT
         } else {
