@@ -20,6 +20,13 @@ jobs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
+    - name: Check for version tag
+      id: tag_check
+      run: |
+        $tag = git tag --points-at HEAD
+        $isTagged = [bool]$tag
+        Write-Host "Tag(s) at HEAD: $tag"
+        echo "is_tagged=$($isTagged.ToString().ToLower())" >> $env:GITHUB_OUTPUT
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v4
     - name: Execute build and run tests
@@ -31,18 +38,6 @@ jobs:
       with:
         name: VolocyNazad.Revit.MediatR
         path: artifacts/*
-    - name: Check if commit is tagged
-      id: tag_check
-      run: |
-        # git tag --points-at всегда завершается с кодом 0 (в отличие от git describe --exact-match,
-        # который пишет в stderr и возвращает 1, если тега нет — это валит шаг на GH Actions даже
-        # при $ErrorActionPreference = "Continue").
-        $tags = git tag --points-at HEAD
-        if ($tags) {
-            echo "is_tagged=true" >> $env:GITHUB_OUTPUT
-        } else {
-            echo "is_tagged=false" >> $env:GITHUB_OUTPUT
-        }
     - name: Publish NuGet package
       if: github.event_name == 'push' && steps.tag_check.outputs.is_tagged == 'true'
       run: |
