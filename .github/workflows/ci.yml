@@ -9,6 +9,7 @@ jobs:
     name: windows-latest
     runs-on: windows-latest
     strategy:
+      fail-fast: false
       matrix:
         configuration: [
           "Release_2021.1.9", "Release_2023.0.0", "Release_2025.0.0"
@@ -33,14 +34,11 @@ jobs:
     - name: Check if commit is tagged
       id: tag_check
       run: |
-        # pwsh на GH Actions по умолчанию завершает шаг ошибкой на любой stderr/non-zero exit
-        # от нативной команды ($PSNativeCommandUseErrorActionPreference) — git describe пишет
-        # "fatal: no tag..." в stderr, когда тега нет. Отключаем это поведение локально для шага.
-        $ErrorActionPreference = "Continue"
-        $PSNativeCommandUseErrorActionPreference = $false
-
-        git describe --tags --exact-match HEAD 2>$null
-        if ($LASTEXITCODE -eq 0) {
+        # git tag --points-at всегда завершается с кодом 0 (в отличие от git describe --exact-match,
+        # который пишет в stderr и возвращает 1, если тега нет — это валит шаг на GH Actions даже
+        # при $ErrorActionPreference = "Continue").
+        $tags = git tag --points-at HEAD
+        if ($tags) {
             echo "is_tagged=true" >> $env:GITHUB_OUTPUT
         } else {
             echo "is_tagged=false" >> $env:GITHUB_OUTPUT
