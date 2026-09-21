@@ -1,28 +1,28 @@
 # Revit.MediatR
 
-[![Revit 2021-2027](https://img.shields.io/badge/Revit-2021–2027-green.svg)](https://autodesk.com/revit)
+[![Revit 2021.1.9, 2023, 2025](https://img.shields.io/badge/Revit-2021.1.9%20%7C%202023%20%7C%202025-green.svg)](https://autodesk.com/revit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![VolocyNazad](https://img.shields.io/badge/VolocyNazad-blue.svg)](https://github.com/VolocyNazad)
 
-> Реализации сервисов пайплайнов MediatR для Revit API.
+> MediatR pipeline service implementations for the Revit API.
 
-Revit.MediatR — это набор сервисов реализации паттерна пайплайн для Revit API с поддержкой
-DI-контейнеризации: команды и обработчики, которые умеют переносить выполнение в поток Revit API
-через `ExternalEvent` ([VolocyNazad.Revit.Events](https://github.com/VolocyNazad/toolkit.revit.events))
-и оборачивать его в именованную транзакцию — без ручного написания `IExternalEventHandler` и
-`Transaction` в каждом месте вызова.
+Revit.MediatR is a set of pipeline-pattern service implementations for the Revit API with support
+for DI containerization: commands and handlers that know how to marshal execution onto the Revit
+API thread via `ExternalEvent` ([VolocyNazad.Revit.Events](https://github.com/VolocyNazad/toolkit.revit.events))
+and wrap it in a named transaction — without having to hand-write an `IExternalEventHandler` and
+`Transaction` at every call site.
 
-## Установка
+## Installation
 
 ```
 dotnet add package VolocyNazad.Revit.MediatR
 ```
 
-Версия пакета привязана к году Revit: `{RevitYear}.0.{patch}` (например, `2025.0.7`). Собирается
-под конкретную версию Revit в зависимости от выбранной конфигурации сборки — так же, как и
-`Revit_All_Main_Versions_API_x64`, от которого зависит проект.
+The package version is tied to the Revit year: `{RevitYear}.0.{patch}` (e.g. `2025.0.7`). It is
+built for a specific Revit version depending on the selected build configuration — the same way as
+`Revit_All_Main_Versions_API_x64`, which the project depends on.
 
-## Регистрация в DI
+## DI Registration
 
 ```csharp
 using Revit.MediatR.DI;
@@ -30,76 +30,85 @@ using Revit.MediatR.DI;
 services.AddMediatR();
 ```
 
-Вызов регистрирует `VolocyNazad.Revit.Events` (`AddEvents`) и `VolocyNazad.Revit.Context`
-(`AddRevitContext`), затем сам MediatR вместе с обработчиками встроенных lambda-команд и
-Revit-специфичными поведениями конвейера (`RevitTransactionBehaviour`,
-`RevitExternalEventBehaviour`), которые автоматически открывают транзакцию и/или переносят
-выполнение в поток Revit API.
+This call registers `VolocyNazad.Revit.Events` (`AddEvents`) and `VolocyNazad.Revit.Context`
+(`AddRevitContext`), then MediatR itself along with the handlers for the built-in lambda commands
+and the Revit-specific pipeline behaviours (`RevitTransactionBehaviour`,
+`RevitExternalEventBehaviour`), which automatically open a transaction and/or marshal execution
+onto the Revit API thread.
 
-## Встроенные команды
+## Built-in Commands
 
-| Команда | Транзакция | ExternalEvent |
+| Command | Transaction | ExternalEvent |
 |---|---|---|
-| `LambdaTransactionCommand` | да | нет |
-| `LambdaExternalEventCommand` | нет | да |
-| `LambdaExternalEventTransactionCommand` | да | да |
+| `LambdaTransactionCommand` | yes | no |
+| `LambdaExternalEventCommand` | no | yes |
+| `LambdaExternalEventTransactionCommand` | yes | yes |
 
-Все выполняются в контексте документа (явно переданного или активного из `IRevitContext`) и
-возвращают `Response<bool>` — обёртку с результатом, флагом ошибки, сообщением и исключением.
+All of them run in the context of a document (either explicitly passed or the active one from
+`IRevitContext`) and return `Response<bool>` — a wrapper carrying the result, an error flag, a
+message, and an exception.
 
-### Пример: транзакция на активном документе
+### Example: transaction on the active document
 
 ```csharp
 Response<bool> response = await mediator.Send(
     new LambdaTransactionCommand(
-        document: null!, // берётся ActiveDocument из IRevitContext
-        transactionName: "Переместить стену",
+        document: null!, // ActiveDocument is taken from IRevitContext
+        transactionName: "Move wall",
         @delegate: (doc, ct) =>
         {
-            // изменения в модели
+            // changes to the model
             return Task.FromResult(true);
         }));
 ```
 
-### Пример: выполнение через ExternalEvent (например, из модального окна WPF)
+### Example: execution via ExternalEvent (e.g. from a WPF modal window)
 
 ```csharp
 Response<bool> response = await mediator.Send(
     new LambdaExternalEventTransactionCommand(
         document: activeDocument,
-        transactionName: "Создать уровень",
+        transactionName: "Create level",
         @delegate: (doc, ct) =>
         {
-            // код, которому обязательно нужен поток Revit API, внутри транзакции
+            // code that must run on the Revit API thread, inside a transaction
             return Task.FromResult(true);
         }));
 ```
 
-### Собственные команды
+### Custom commands
 
-Свои команды можно завести, унаследовавшись от `Revit.MediatR.Base.DocumentCommand` и реализовав
-маркерные интерфейсы `Revit.MediatR.Abstractions.Models.ITransactionCommand` и/или
-`IExternalEventCommand`, а также написав для них `IRequestHandler<TCommand, Response<bool>>` —
-поведения конвейера подхватят их автоматически по этим интерфейсам.
+You can create your own commands by inheriting from `Revit.MediatR.Base.DocumentCommand` and
+implementing the marker interfaces `Revit.MediatR.Abstractions.Models.ITransactionCommand` and/or
+`IExternalEventCommand`, as well as writing an `IRequestHandler<TCommand, Response<bool>>` for
+them — the pipeline behaviours will pick them up automatically via these interfaces.
 
-## Поддерживаемые версии Revit
+## Supported Revit Versions
 
-Пакет собирается под все версии Revit из списка `Configurations` в
-`src/Revit.MediatR/Revit.MediatR.csproj` (2011–2027), таргетируясь на `net48` или `net8.0-windows`
-в зависимости от года — переключение и генерацию define-констант (`IS2025`, `BEFORE2021`,
-`AFTER2021` и т.д.) берёт на себя общий MSBuild SDK
+The package is built for every Revit version listed in the `Configurations` element of
+`src/Revit.MediatR/Revit.MediatR.csproj` (2021.1.9, 2023.0.0, and 2025.0.0), targeting net48 or net8.0-windows
+depending on the year — the switching and generation of define constants (`IS2025`, `BEFORE2021`,
+`AFTER2021`, etc.) is handled by the shared MSBuild SDK
 [VolocyNazad.Revit.Sdk](https://github.com/VolocyNazad/toolkit.revit.sdk).
 
-## Разработка
+## Development
 
-- `dotnet build --configuration "Release_2025.0.0"` — сборка под конкретную версию Revit.
-- `dotnet test --configuration "Release_2025.0.0"` — юнит-тесты (`tests/Revit.MediatR.Tests`).
-  Тесты, которым для проверки нужны реальные Revit-типизированные объекты (`Document`), помечены
-  `Skip` — вне процесса Revit сборки `RevitAPI`/`RevitAPIUI` не загружаются.
-- Версия пакета автоверсионируется через [MinVer](https://github.com/adamralph/minver) по git-тегам
-  вида `0.0.7`; чтобы выпустить новую версию, поставьте тег и запушьте его:
+- `dotnet build --configuration "Release_2025.0.0"` — build for a specific Revit version.
+- `dotnet test --configuration "Release_2025.0.0"` — unit tests (`tests/Revit.MediatR.Tests`).
+  Tests that need real Revit-typed objects (`Document`) to work are marked `Skip` — the
+  `RevitAPI`/`RevitAPIUI` assemblies are not loaded outside of the Revit process.
+- The package version is auto-versioned via [MinVer](https://github.com/adamralph/minver) from
+  git tags of the form `0.0.7`; to release a new version, create a tag and push it:
   `git tag 0.0.7 && git push origin main --follow-tags`.
 
-## Лицензия
+## License
 
 [MIT](LICENSE.md)
+
+## Development documentation
+
+- [Development policy](docs/policies/development.md)
+- [Repository guide and technology stack](docs/repository.md)
+
+## Contributing
+ [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes.

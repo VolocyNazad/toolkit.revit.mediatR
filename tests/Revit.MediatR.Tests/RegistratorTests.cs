@@ -3,35 +3,36 @@ using Xunit;
 namespace Revit.MediatR.Tests;
 
 /// <summary>
-/// <see cref="Registrator.AddMediatR"/> вызывает <c>AddEvents()</c> из <c>VolocyNazad.Revit.Events</c>,
-/// который уже на этапе регистрации (а не только при использовании) обращается к
-/// <c>RevitAPIUI.dll</c> — вне процесса/установки Revit эта сборка не загружается
-/// (<see cref="System.IO.FileNotFoundException"/>). Поэтому DI-регистрацию из этого пакета
-/// невозможно юнит-тестировать без реального Revit — это архитектурное ограничение,
-/// а не недоделанные тесты.
+/// <see cref="Registrator.AddMediatR"/> calls <c>AddEvents()</c> from <c>VolocyNazad.Revit.Events</c>,
+/// which reaches into <c>RevitAPIUI.dll</c> already at registration time (not only when used) —
+/// outside of a Revit process/installation this assembly is not loaded
+/// (<see cref="System.IO.FileNotFoundException"/>). Because of this, DI registration from this package
+/// cannot be unit-tested without a real Revit installation — this is an architectural constraint,
+/// not incomplete tests.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Test names use underscores to separate scenario and expected result.")]
 public class RegistratorTests
 {
-    [Fact(Skip = "Требует установленного Revit: AddMediatR() -> AddEvents() грузит RevitAPIUI.dll " +
-                 "уже при регистрации в контейнере, а она не загружается вне процесса/установки Revit.")]
+    [Fact(Skip = "Requires Revit to be installed: AddMediatR() -> AddEvents() loads RevitAPIUI.dll " +
+                 "already at container registration time, and it is not loaded outside of a Revit process/installation.")]
     public void AddMediatR_RegistersMediator()
     {
     }
 
-    [Fact(Skip = "Требует установленного Revit: AddMediatR() -> AddEvents() грузит RevitAPIUI.dll " +
-                 "уже при регистрации в контейнере, а она не загружается вне процесса/установки Revit.")]
+    [Fact(Skip = "Requires Revit to be installed: AddMediatR() -> AddEvents() loads RevitAPIUI.dll " +
+                 "already at container registration time, and it is not loaded outside of a Revit process/installation.")]
     public void AddMediatR_RegistersLambdaTransactionCommandHandler()
     {
     }
 
-    [Fact(Skip = "Требует установленного Revit: AddMediatR() -> AddEvents() грузит RevitAPIUI.dll " +
-                 "уже при регистрации в контейнере, а она не загружается вне процесса/установки Revit.")]
+    [Fact(Skip = "Requires Revit to be installed: AddMediatR() -> AddEvents() loads RevitAPIUI.dll " +
+                 "already at container registration time, and it is not loaded outside of a Revit process/installation.")]
     public void AddMediatR_RegistersLambdaExternalEventCommandHandler()
     {
     }
 
-    [Fact(Skip = "Требует установленного Revit: AddMediatR() -> AddEvents() грузит RevitAPIUI.dll " +
-                 "уже при регистрации в контейнере, а она не загружается вне процесса/установки Revit.")]
+    [Fact(Skip = "Requires Revit to be installed: AddMediatR() -> AddEvents() loads RevitAPIUI.dll " +
+                 "already at container registration time, and it is not loaded outside of a Revit process/installation.")]
     public void AddMediatR_RegistersLambdaExternalEventTransactionCommandHandler()
     {
     }

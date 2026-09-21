@@ -4,8 +4,9 @@ using Xunit;
 namespace Revit.MediatR.Tests;
 
 /// <summary>
-/// Чистая логика <see cref="Response{TResult}"/>, не затрагивающая Revit API — можно тестировать без установленного Revit.
+/// Pure logic of <see cref="Response{TResult}"/> that does not touch the Revit API — can be tested without Revit installed.
 /// </summary>
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Test names use underscores to separate scenario and expected result.")]
 public class ResponseTests
 {
     [Fact]
