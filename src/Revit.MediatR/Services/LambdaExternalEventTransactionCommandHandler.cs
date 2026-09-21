@@ -7,21 +7,23 @@ using Revit.MediatR.Models;
 namespace Revit.MediatR.Services;
 
 /// <summary>
-/// Обработчик <see cref="LambdaExternalEventTransactionCommand"/> — вызывает делегат команды над целевым
-/// документом. Открытие/коммит транзакции и вынос в поток Revit API выполняют
-/// <see cref="RevitTransactionBehaviour{TRequest,TResponse}"/> и <see cref="RevitExternalEventBehaviour{TRequest,TResponse}"/>
-/// в конвейере MediatR.
+/// Handler for <see cref="LambdaExternalEventTransactionCommand"/> — invokes the command's delegate against
+/// the target document. Opening/committing the transaction and marshaling onto the Revit API thread are
+/// performed by <see cref="RevitTransactionBehaviour{TRequest,TResponse}"/> and
+/// <see cref="RevitExternalEventBehaviour{TRequest,TResponse}"/> in the MediatR pipeline.
 /// </summary>
-/// <param name="revitContext">Источник текущего контекста Revit (активного документа).</param>
+/// <param name="revitContext">The source of the current Revit context (the active document).</param>
 public class LambdaExternalEventTransactionCommandHandler(IRevitContext revitContext)
     : IRequestHandler<LambdaExternalEventTransactionCommand, Response<bool>>
 {
     /// <inheritdoc/>
-    /// <exception cref="InvalidOperationException">
-    /// Ни у команды, ни у <see cref="IRevitContext"/> нет активного документа.
+    /// <exception cref="System.InvalidOperationException">
+    /// Neither the command nor <see cref="IRevitContext"/> has an active document.
     /// </exception>
     public async Task<Response<bool>> Handle(LambdaExternalEventTransactionCommand request, CancellationToken cancellation)
     {
+        Guard.ThrowIfNull(request, nameof(request));
+
         Document targetDocument = request.Document ?? revitContext.ActiveDocument
             ?? throw new InvalidOperationException($"Document is null");
         return new Response<bool> { Result = await request.Delegate.Invoke(targetDocument, cancellation) };

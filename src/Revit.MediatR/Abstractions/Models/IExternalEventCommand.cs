@@ -1,8 +1,8 @@
 namespace Revit.MediatR.Abstractions.Models;
 
 /// <summary>
-/// Команда уровня документа, которая должна выполняться через Revit <c>ExternalEvent</c>
-/// (то есть в потоке Revit API, а не в вызывающем потоке).
+/// A document-level command that must be executed via Revit's <c>ExternalEvent</c>
+/// (i.e. on the Revit API thread, not on the calling thread).
 /// </summary>
 public interface IExternalEventCommand : IDocumentCommand
 {

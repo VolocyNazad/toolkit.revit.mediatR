@@ -1,12 +1,12 @@
 namespace Revit.MediatR.Abstractions.Models;
 
 /// <summary>
-/// Команда уровня документа, выполняемая внутри именованной Revit-транзакции.
+/// A document-level command executed within a named Revit transaction.
 /// </summary>
 public interface ITransactionCommand : IDocumentCommand
 {
     /// <summary>
-    /// Имя транзакции, отображаемое в истории отмены/повтора Revit.
+    /// The transaction name, shown in Revit's undo/redo history.
     /// </summary>
     string TransactionName { get; }
 }

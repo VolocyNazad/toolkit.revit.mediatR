@@ -5,12 +5,12 @@ using Revit.MediatR.Base;
 namespace Revit.MediatR.Models;
 
 /// <summary>
-/// Команда уровня документа, выполняющая переданный асинхронный делегат внутри именованной Revit-транзакции
-/// (без <c>ExternalEvent</c> — предполагается, что она уже вызывается в потоке Revit API).
+/// A document-level command that runs the supplied async delegate inside a named Revit transaction
+/// (without <c>ExternalEvent</c> — it is assumed to already be invoked on the Revit API thread).
 /// </summary>
-/// <param name="document">Целевой документ.</param>
-/// <param name="transactionName">Имя транзакции, отображаемое в истории отмены/повтора Revit.</param>
-/// <param name="delegate">Асинхронный делегат, выполняемый над целевым <see cref="Document"/> внутри транзакции.</param>
+/// <param name="document">The target document.</param>
+/// <param name="transactionName">The transaction name, shown in Revit's undo/redo history.</param>
+/// <param name="delegate">The async delegate executed against the target <see cref="Document"/> inside the transaction.</param>
 public class LambdaTransactionCommand(Document document, string transactionName, Func<Document, CancellationToken, Task<bool>> @delegate)
     : LambdaDocumentCommand(document, @delegate), ITransactionCommand
 {

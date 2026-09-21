@@ -7,20 +7,22 @@ using Revit.MediatR.Models;
 namespace Revit.MediatR.Services;
 
 /// <summary>
-/// Обработчик <see cref="LambdaTransactionCommand"/> — вызывает делегат команды над целевым документом.
-/// Само открытие/коммит транзакции выполняет <see cref="RevitTransactionBehaviour{TRequest,TResponse}"/>
-/// в конвейере MediatR.
+/// Handler for <see cref="LambdaTransactionCommand"/> — invokes the command's delegate against the target document.
+/// Opening/committing the transaction itself is performed by <see cref="RevitTransactionBehaviour{TRequest,TResponse}"/>
+/// in the MediatR pipeline.
 /// </summary>
-/// <param name="revitContext">Источник текущего контекста Revit (активного документа).</param>
+/// <param name="revitContext">The source of the current Revit context (the active document).</param>
 public class LambdaTransactionCommandHandler(IRevitContext revitContext)
     : IRequestHandler<LambdaTransactionCommand, Response<bool>>
 {
     /// <inheritdoc/>
-    /// <exception cref="InvalidOperationException">
-    /// Ни у команды, ни у <see cref="IRevitContext"/> нет активного документа.
+    /// <exception cref="System.InvalidOperationException">
+    /// Neither the command nor <see cref="IRevitContext"/> has an active document.
     /// </exception>
     public async Task<Response<bool>> Handle(LambdaTransactionCommand request, CancellationToken cancellation)
     {
+        Guard.ThrowIfNull(request, nameof(request));
+
         Document targetDocument = request.Document ?? revitContext.ActiveDocument
             ?? throw new InvalidOperationException($"Document is null");
         return new Response<bool> { Result = await request.Delegate.Invoke(targetDocument, cancellation) };

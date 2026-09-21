@@ -6,12 +6,12 @@ using Revit.MediatR.Models;
 namespace Revit.MediatR.Abstractions.Models;
 
 /// <summary>
-/// MediatR-запрос, выполняемый в контексте конкретного документа Revit.
+/// A MediatR request executed in the context of a specific Revit document.
 /// </summary>
 public interface IDocumentCommand : IRequest<Response<bool>>
 {
     /// <summary>
-    /// Целевой документ. Если <see langword="null"/>, обработчик использует активный документ из <c>IRevitContext</c>.
+    /// The target document. If <see langword="null"/>, the handler uses the active document from <c>IRevitContext</c>.
     /// </summary>
     Document? Document { get; }
 }

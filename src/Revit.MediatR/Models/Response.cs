@@ -1,28 +1,28 @@
 namespace Revit.MediatR.Models;
 
 /// <summary>
-/// Универсальный результат обработки MediatR-команды: значение, флаг ошибки и (опционально) исключение.
+/// The universal result of processing a MediatR command: a value, an error flag, and (optionally) an exception.
 /// </summary>
-/// <typeparam name="TResult">Тип полезной нагрузки результата.</typeparam>
+/// <typeparam name="TResult">The type of the result payload.</typeparam>
 public sealed class Response<TResult>
 {
     /// <summary>
-    /// Значение, возвращённое обработчиком команды.
+    /// The value returned by the command handler.
     /// </summary>
     public TResult? Result { get; set; }
 
     /// <summary>
-    /// <see langword="true"/>, если при обработке команды произошла ошибка.
+    /// <see langword="true"/> if an error occurred while processing the command.
     /// </summary>
     public bool HasError { get; set; }
 
     /// <summary>
-    /// Сообщение об ошибке или произвольный комментарий к результату.
+    /// The error message, or an arbitrary comment on the result.
     /// </summary>
     public string Message { get; set; } = string.Empty;
 
     /// <summary>
-    /// Исключение, ставшее причиной ошибки, если оно было перехвачено.
+    /// The exception that caused the error, if one was caught.
     /// </summary>
     public Exception? Exception { get; set; }
 }

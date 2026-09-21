@@ -5,10 +5,10 @@ using Revit.MediatR.Abstractions.Models;
 namespace Revit.MediatR.Base;
 
 /// <summary>
-/// Базовая реализация <see cref="IDocumentCommand"/> для команд уровня документа Revit.
+/// Base implementation of <see cref="IDocumentCommand"/> for Revit document-level commands.
 /// </summary>
 /// <param name="document">
-/// Целевой документ. Если не задан, обработчик использует активный документ из <c>IRevitContext</c>.
+/// The target document. If not set, the handler uses the active document from <c>IRevitContext</c>.
 /// </param>
 public abstract class DocumentCommand(Document? document = null) : IDocumentCommand
 {

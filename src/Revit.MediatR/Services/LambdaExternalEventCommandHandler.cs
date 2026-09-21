@@ -7,19 +7,21 @@ using Revit.MediatR.Models;
 namespace Revit.MediatR.Services;
 
 /// <summary>
-/// Обработчик <see cref="LambdaExternalEventCommand"/> — вызывает делегат команды над целевым документом
-/// (запрошенным явно или активным документом из <see cref="IRevitContext"/>).
+/// Handler for <see cref="LambdaExternalEventCommand"/> — invokes the command's delegate against the target
+/// document (explicitly requested, or the active document from <see cref="IRevitContext"/>).
 /// </summary>
-/// <param name="revitContext">Источник текущего контекста Revit (активного документа).</param>
+/// <param name="revitContext">The source of the current Revit context (the active document).</param>
 public class LambdaExternalEventCommandHandler(IRevitContext revitContext)
     : IRequestHandler<LambdaExternalEventCommand, Response<bool>>
 {
     /// <inheritdoc/>
-    /// <exception cref="InvalidOperationException">
-    /// Ни у команды, ни у <see cref="IRevitContext"/> нет активного документа.
+    /// <exception cref="System.InvalidOperationException">
+    /// Neither the command nor <see cref="IRevitContext"/> has an active document.
     /// </exception>
     public async Task<Response<bool>> Handle(LambdaExternalEventCommand request, CancellationToken cancellation)
     {
+        Guard.ThrowIfNull(request, nameof(request));
+
         Document targetDocument = request.Document ?? revitContext.ActiveDocument
             ?? throw new InvalidOperationException($"Document is null");
         return new Response<bool> { Result = await request.Delegate.Invoke(targetDocument, cancellation) };

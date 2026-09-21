@@ -6,13 +6,13 @@ using Revit.MediatR.Abstractions.Models;
 namespace Revit.MediatR.Services;
 
 /// <summary>
-/// Поведение конвейера MediatR: переносит выполнение <typeparamref name="TRequest"/> в поток Revit API
-/// через <see cref="IAsyncExternalEvent"/> (Revit <c>ExternalEvent</c> под капотом) и логирует старт/финиш.
+/// MediatR pipeline behaviour: marshals execution of <typeparamref name="TRequest"/> onto the Revit API thread
+/// via <see cref="IAsyncExternalEvent"/> (a Revit <c>ExternalEvent</c> under the hood) and logs the start/finish.
 /// </summary>
-/// <typeparam name="TRequest">Тип команды уровня документа, реализующей <see cref="IExternalEventCommand"/>.</typeparam>
-/// <typeparam name="TResponse">Тип результата обработки команды.</typeparam>
-/// <param name="externalEvent">Внешнее событие Revit, через которое выполняется делегат.</param>
-/// <param name="logger">Логгер для трассировки старта/финиша внешнего события.</param>
+/// <typeparam name="TRequest">The document-level command type implementing <see cref="IExternalEventCommand"/>.</typeparam>
+/// <typeparam name="TResponse">The type of the command's processing result.</typeparam>
+/// <param name="externalEvent">The Revit external event through which the delegate is executed.</param>
+/// <param name="logger">The logger used to trace the start/finish of the external event.</param>
 public class RevitExternalEventBehaviour<TRequest, TResponse>(
         IAsyncExternalEvent externalEvent,
         ILogger<RevitExternalEventBehaviour<TRequest, TResponse>> logger)
@@ -21,16 +21,22 @@ public class RevitExternalEventBehaviour<TRequest, TResponse>(
     /// <inheritdoc/>
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellation)
     {
-        TResponse? response = default;
-        await externalEvent.Raise(async (uiapp) =>
+        Guard.ThrowIfNull(next, nameof(next));
+
+        Task<TResponse>? responseTask = null;
+        await externalEvent.Raise(_ =>
         {
             logger.LogTrace("External event started. ");
-
-            response = await next(cancellation).ConfigureAwait(false);
-
-            logger.LogTrace("External event finished. ");
-
+            responseTask = next(cancellation);
         });
+
+        if (responseTask is null)
+        {
+            throw new InvalidOperationException("The external event completed without invoking its action.");
+        }
+
+        TResponse response = await responseTask.ConfigureAwait(false);
+        logger.LogTrace("External event finished. ");
         return response;
     }
 }
