@@ -1,6 +1,6 @@
 # Revit.MediatR
 
-[![Revit 2021.1.9, 2023, 2025](https://img.shields.io/badge/Revit-2021.1.9%20%7C%202023%20%7C%202025-green.svg)](https://autodesk.com/revit)
+[![Revit 2021-2027](https://img.shields.io/badge/Revit-2021%20--%202027-green.svg)](https://autodesk.com/revit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![VolocyNazad](https://img.shields.io/badge/VolocyNazad-blue.svg)](https://github.com/VolocyNazad)
 
@@ -20,7 +20,7 @@ dotnet add package VolocyNazad.Revit.MediatR
 
 The package version is tied to the Revit year: `{RevitYear}.0.{patch}` (e.g. `2025.0.7`). It is
 built for a specific Revit version depending on the selected build configuration — the same way as
-`Revit_All_Main_Versions_API_x64`, which the project depends on.
+`Nice3point.Revit.Api.RevitAPI` / `Nice3point.Revit.Api.RevitAPIUI` (floating `$(MajorRevitVersion).*`), which the project depends on.
 
 ## DI Registration
 
@@ -86,15 +86,15 @@ them — the pipeline behaviours will pick them up automatically via these inter
 ## Supported Revit Versions
 
 The package is built for every Revit version listed in the `Configurations` element of
-`src/Revit.MediatR/Revit.MediatR.csproj` (2021.1.9, 2023.0.0, and 2025.0.0), targeting net48 or net8.0-windows
+`src/Revit.MediatR/Revit.MediatR.csproj` (2021.1.100, 2022.1.80, 2023.1.90, 2024.3.60, 2025.4.60, 2026.4.10, and 2027.3.0), targeting net48, net8.0-windows, or net10.0-windows
 depending on the year — the switching and generation of define constants (`IS2025`, `BEFORE2021`,
 `AFTER2021`, etc.) is handled by the shared MSBuild SDK
 [VolocyNazad.Revit.Sdk](https://github.com/VolocyNazad/toolkit.revit.sdk).
 
 ## Development
 
-- `dotnet build --configuration "Release_2025.0.0"` — build for a specific Revit version.
-- `dotnet test --configuration "Release_2025.0.0"` — unit tests (`tests/Revit.MediatR.Tests`).
+- `dotnet build --configuration "Release_2026.4.10"` — build for a specific Revit version.
+- `dotnet test --configuration "Release_2026.4.10"` — unit tests (`tests/Revit.MediatR.Tests`).
   Tests that need real Revit-typed objects (`Document`) to work are marked `Skip` — the
   `RevitAPI`/`RevitAPIUI` assemblies are not loaded outside of the Revit process.
 - The package version is auto-versioned via [MinVer](https://github.com/adamralph/minver) from
