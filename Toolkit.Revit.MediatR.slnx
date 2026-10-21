@@ -22,6 +22,7 @@
     <File Path="CHANGELOG.md" />
     <File Path="CONTRIBUTING.md" />
     <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
     <File Path="global.json" />
     <File Path="LICENSE.md" />
     <File Path="README.md" />
@@ -29,7 +30,10 @@
     <File Path=".editorconfig" />
   </Folder>
   <Project Path="src/Revit.MediatR/Revit.MediatR.csproj" />
-  <Project Path="tests/Revit.MediatR.Tests/Revit.MediatR.Tests.csproj" />
+  <Folder Name="/tests/">
+    <File Path="tests/Directory.Packages.props" />
+    <Project Path="tests/Revit.MediatR.Tests/Revit.MediatR.Tests.csproj" />
+  </Folder>
   <Folder Name="/docs/">
     <File Path="docs/repository.md" />
   </Folder>

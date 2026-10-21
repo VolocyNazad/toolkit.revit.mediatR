@@ -50,13 +50,6 @@
 		</PropertyGroup>
 	</Target>
 
-	<ItemGroup>
-		<PackageReference Include="MinVer" Version="8.0.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
-
 	<PropertyGroup>
 		<UseWPF>true</UseWPF>
 		<Configurations>
@@ -66,21 +59,21 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MediatR" Version="14.2.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.12" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.12" />
-		<PackageReference Include="PolySharp" Version="1.16.0">
+		<PackageReference Include="MediatR" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+		<PackageReference Include="PolySharp">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="AutoConstructor" Version="5.6.0">
+		<PackageReference Include="AutoConstructor">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Nice3point.Revit.Api.RevitAPI" Version="$(MajorRevitVersion).*" />
-		<PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" Version="$(MajorRevitVersion).*" />
-		<PackageReference Include="VolocyNazad.Revit.Context" Version="$(MajorRevitVersion).0.10" />
-		<PackageReference Include="VolocyNazad.Revit.Events" Version="$(MajorRevitVersion).0.10" />
+		<PackageReference Include="Nice3point.Revit.Api.RevitAPI" />
+		<PackageReference Include="Nice3point.Revit.Api.RevitAPIUI" />
+		<PackageReference Include="VolocyNazad.Revit.Context" />
+		<PackageReference Include="VolocyNazad.Revit.Events" />
 	</ItemGroup>
 
 </Project>
