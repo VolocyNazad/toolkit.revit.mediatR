@@ -110,6 +110,7 @@ depending on the year — the switching and generation of define constants (`IS2
 - [Development policy](docs/policies/development.md)
 - [Repository guide and technology stack](docs/repository.md)
 - [Branching policy](docs/policies/branching.md)
+- [Commit message policy](docs/policies/commits.md)
 
 ## Contributing
  [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes.
