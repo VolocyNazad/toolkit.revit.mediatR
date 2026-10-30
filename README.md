@@ -112,6 +112,8 @@ depending on the year — the switching and generation of define constants (`IS2
 - [Branching policy](docs/policies/branching.md)
 - [Commit message policy](docs/policies/commits.md)
 - [Changelog policy](docs/policies/changelog.md)
+- [Testing policy](docs/policies/testing.md)
+- [Benchmark policy](docs/policies/benchmarks.md)
 
 ## Contributing
  [CONTRIBUTING.md](CONTRIBUTING.md) before submitting changes.
