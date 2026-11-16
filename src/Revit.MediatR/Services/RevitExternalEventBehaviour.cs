@@ -13,22 +13,22 @@ namespace Revit.MediatR.Services;
 /// <typeparam name="TResponse">The type of the command's processing result.</typeparam>
 /// <param name="externalEvent">The Revit external event through which the delegate is executed.</param>
 /// <param name="logger">The logger used to trace the start/finish of the external event.</param>
-public class RevitExternalEventBehaviour<TRequest, TResponse>(
+public partial class RevitExternalEventBehaviour<TRequest, TResponse>(
         IAsyncExternalEvent externalEvent,
         ILogger<RevitExternalEventBehaviour<TRequest, TResponse>> logger)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull, IExternalEventCommand
 {
     /// <inheritdoc/>
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellation)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         Guard.ThrowIfNull(next, nameof(next));
 
         Task<TResponse>? responseTask = null;
         await externalEvent.Raise(_ =>
         {
-            logger.LogTrace("External event started. ");
-            responseTask = next(cancellation);
-        });
+            LogExternalEventStarted(logger);
+            responseTask = next(cancellationToken);
+        }).ConfigureAwait(false);
 
         if (responseTask is null)
         {
@@ -36,7 +36,13 @@ public class RevitExternalEventBehaviour<TRequest, TResponse>(
         }
 
         TResponse response = await responseTask.ConfigureAwait(false);
-        logger.LogTrace("External event finished. ");
+        LogExternalEventFinished(logger);
         return response;
     }
+
+    [LoggerMessage(EventId = 1, Level = LogLevel.Trace, Message = "External event started.")]
+    private static partial void LogExternalEventStarted(ILogger logger);
+
+    [LoggerMessage(EventId = 2, Level = LogLevel.Trace, Message = "External event finished.")]
+    private static partial void LogExternalEventFinished(ILogger logger);
 }
