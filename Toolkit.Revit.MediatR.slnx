@@ -14,6 +14,7 @@
     <BuildType Name="Release_2025.4.60" />
     <BuildType Name="Release_2026.4.10" />
     <BuildType Name="Release_2027.3.0" />
+    <Platform Name="x64" />
   </Configurations>
   <Folder Name="/solutionItems/">
     <File Path=".gitattributes" />
@@ -38,12 +39,18 @@
     <File Path="docs/repository.md" />
   </Folder>
   <Folder Name="/docs/policies/">
+    <File Path="docs/policies/README.md" />
     <File Path="docs/policies/development.md" />
     <File Path="docs/policies/branching.md" />
     <File Path="docs/policies/commits.md" />
     <File Path="docs/policies/changelog.md" />
     <File Path="docs/policies/testing.md" />
     <File Path="docs/policies/benchmarks.md" />
+    <File Path="docs/policies/pull-requests.md" />
+    <File Path="docs/policies/releases.md" />
+    <File Path="docs/policies/documentation.md" />
+    <File Path="docs/policies/build.md" />
+    <File Path="docs/policies/repository-maintenance.md" />
   </Folder>
   <Folder Name="/solutionItems/.github/">
     <File Path=".github/pull_request_template.md" />
