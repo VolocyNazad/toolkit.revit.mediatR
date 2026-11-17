@@ -19,12 +19,12 @@ public class LambdaTransactionCommandHandler(IRevitContext revitContext)
     /// <exception cref="System.InvalidOperationException">
     /// Neither the command nor <see cref="IRevitContext"/> has an active document.
     /// </exception>
-    public async Task<Response<bool>> Handle(LambdaTransactionCommand request, CancellationToken cancellation)
+    public async Task<Response<bool>> Handle(LambdaTransactionCommand request, CancellationToken cancellationToken)
     {
         Guard.ThrowIfNull(request, nameof(request));
 
         Document targetDocument = request.Document ?? revitContext.ActiveDocument
             ?? throw new InvalidOperationException($"Document is null");
-        return new Response<bool> { Result = await request.Delegate.Invoke(targetDocument, cancellation) };
+        return new Response<bool> { Result = await request.Delegate.Invoke(targetDocument, cancellationToken).ConfigureAwait(false) };
     }
 }

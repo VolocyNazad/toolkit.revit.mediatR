@@ -15,7 +15,7 @@ namespace Revit.MediatR.Services;
 /// <typeparam name="TResponse">The type of the command's processing result.</typeparam>
 /// <param name="revitContext">The source of the current Revit context (the active document).</param>
 /// <param name="logger">The logger used to trace the start/finish of the transaction.</param>
-public class RevitTransactionBehaviour<TRequest, TResponse>(
+public partial class RevitTransactionBehaviour<TRequest, TResponse>(
         IRevitContext revitContext, ILogger<RevitTransactionBehaviour<TRequest, TResponse>> logger)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : ITransactionCommand
 {
@@ -23,29 +23,33 @@ public class RevitTransactionBehaviour<TRequest, TResponse>(
     /// <exception cref="System.InvalidOperationException">
     /// Neither the command nor <see cref="IRevitContext"/> has an active document.
     /// </exception>
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellation)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         Guard.ThrowIfNull(request, nameof(request));
         Guard.ThrowIfNull(next, nameof(next));
 
         Document? targetDocument = request.Document ?? revitContext.ActiveDocument
-            ?? throw new InvalidOperationException($"Document is null");
+            ?? throw new InvalidOperationException("Document is null");
         using Transaction transaction = new(targetDocument, request.TransactionName);
 
-        logger.LogTrace(
-            "Transaction for document '{revit.document.title}' with name '{revit.transaction.name}'. Starting...",
-            request.Document?.Title, request.TransactionName);
+        LogTransactionStarting(logger, request.Document?.Title, request.TransactionName);
 
         transaction.Start();
 
-        TResponse? response = await next(cancellation).ConfigureAwait(false);
+        TResponse? response = await next(cancellationToken).ConfigureAwait(false);
 
         transaction.Commit();
 
-        logger.LogTrace(
-            "Transaction for document '{revit.document.title}' with name '{revit.transaction.name}'. Commited.",
-            request.Document?.Title, request.TransactionName);
+        LogTransactionCommitted(logger, request.Document?.Title, request.TransactionName);
 
         return response;
     }
+
+    [LoggerMessage(EventId = 1, Level = LogLevel.Trace,
+        Message = "Transaction for document '{DocumentTitle}' with name '{TransactionName}' is starting.")]
+    private static partial void LogTransactionStarting(ILogger logger, string? documentTitle, string transactionName);
+
+    [LoggerMessage(EventId = 2, Level = LogLevel.Trace,
+        Message = "Transaction for document '{DocumentTitle}' with name '{TransactionName}' is committed.")]
+    private static partial void LogTransactionCommitted(ILogger logger, string? documentTitle, string transactionName);
 }
